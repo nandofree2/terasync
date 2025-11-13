@@ -1,0 +1,24 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  password: 12341234
+  host: 127.0.0.1
+  pool: <%= ENV.fetch("DB_POOL", 10) %>
+
+
+development:
+  <<: *default
+  database: terasync_development
+
+
+test:
+  <<: *default
+  database: terasync_test
+
+production:
+  <<: *default
+  database: terasync_production
+  username: terasync
+  password: <%= ENV["TERASYNC_DATABASE_PASSWORD"] %>
