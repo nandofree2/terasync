@@ -1,0 +1,177 @@
+/* app/assets/stylesheets/_sidebar.scss */
+
+/* set CSS vars for ease */
+:root {
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 72px;
+  --sidebar-overlay-width: 260px;
+}
+
+/* 1) Base behaviour: ensure box-sizing and no accidental min-width */
+.main-with-sidebar, .main-with-sidebar * {
+  box-sizing: border-box;
+}
+/* Base sidebar */
+.app-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  z-index: 1050;
+  transition: width .20s ease, transform .18s ease;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+
+.app-sidebar .sidebar-top {
+  height: 56px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  background: #f8f9fb;
+}
+
+.app-sidebar .brand-text {
+  font-size: 1.05rem;
+}
+
+/* Menu */
+.app-sidebar .sidebar-menu {
+  overflow: auto;
+  padding-bottom: 16px;
+}
+
+.app-sidebar .nav-link {
+  color: #1f2937;
+  padding: .5rem .75rem;
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  border-radius: 6px;
+}
+.app-sidebar .nav-link .menu-text { white-space: nowrap; }
+.app-sidebar .nav-link .bi { font-size: 1.05rem; }
+
+/* hovered or active */
+.app-sidebar .nav-link:hover, .app-sidebar .nav-link.active {
+  background: rgba(85,102,231,0.08);
+  color: #334155;
+}
+
+/* children */
+.app-sidebar .sub-menu .nav-link {
+  padding-left: 1rem;
+  font-size: .95rem;
+}
+
+/* footer */
+.app-sidebar .sidebar-footer { border-top: 1px solid rgba(0,0,0,0.03); }
+
+/* collapsed state */
+body.sidebar-collapsed .app-sidebar {
+  width: 72px;
+}
+body.sidebar-collapsed .app-sidebar .menu-text { display: none; }
+body.sidebar-collapsed .app-sidebar .nav-link { justify-content: center; padding-left: 0.35rem; padding-right: 0.35rem; }
+body.sidebar-collapsed .app-sidebar .sub-menu { position: absolute; left: 72px; top: 0; display: none; min-width: 220px; z-index: 2000; background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+body.sidebar-collapsed .app-sidebar .has-children:hover .sub-menu { display: block; }
+
+/* content area must shift */
+.main-with-sidebar {
+  margin-left: 240px;
+  transition: margin-left .20s ease;
+}
+body.sidebar-collapsed .main-with-sidebar { margin-left: 72px; }
+
+/* 2) Desktop & large screens: content is shifted by sidebar width */
+@media (min-width: 992px) {
+  /* sidebar is expected fixed on the left with width var(--sidebar-width) */
+  .main-with-sidebar {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    max-width: calc(100% - var(--sidebar-width));
+    padding: 1.5rem;
+    overflow-x: hidden; /* avoid overflow caused by children */
+  }
+
+  /* collapsed state (when user toggles sidebar) */
+  body.sidebar-collapsed .main-with-sidebar {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+    max-width: calc(100% - var(--sidebar-collapsed-width));
+  }
+}
+
+
+/* tablet & mobile: treat sidebar as off-canvas overlay */
+@media (max-width: 991.98px) {
+  .main-with-sidebar {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem;
+  }
+}
+
+/* 4) Make header row wrap instead of forcing width (prevents push) */
+.main-with-sidebar .d-flex.justify-content-between,
+.main-with-sidebar .page-header,
+.main-with-sidebar .header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: center;
+}
+
+/* ensure title can shrink and not force width */
+.main-with-sidebar .page-title,
+.main-with-sidebar h1, .main-with-sidebar .page-title {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+/* actions group (buttons) should wrap below on small screens */
+.main-with-sidebar .header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: .5rem;
+  flex: 0 1 auto;
+}
+
+/* 5) Make tables and cards truly responsive inside the container */
+.main-with-sidebar .table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent large long text or elements from expanding container */
+.main-with-sidebar td,
+.main-with-sidebar th {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* 6) Safety: if something forces very wide min-width, cap it */
+.main-with-sidebar .row,
+.main-with-sidebar .container,
+.main-with-sidebar .card {
+  max-width: 100%;
+}
+
+/* 7) Optional: small tweak so large header cards not push the table */
+.main-with-sidebar .stat-card { width: 100%; box-sizing: border-box; }
+
+/* 8) Overlay backdrop control (if you already added .backdrop element) */
+.backdrop { display: none; }
+body.sidebar-open .backdrop { display: block; }
+/* ensure tables & cards are fluid */
+.table-responsive { overflow-x: auto; }
+.card, .stat-card { width: 100%; box-sizing: border-box; }
+
+/* small visual tweaks */
+.app-sidebar .nav-link { white-space: nowrap; }
+/* small aesthetic */
+.stat-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:8px; padding:1rem; }
+
